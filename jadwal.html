@@ -1,234 +1,249 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ABSENSI SHIFT (REFRESH UNTUK UPDATE DATA)</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    .section {
-      border: 1px solid #ddd;
-      background-color: #f9f9f9;
-      padding: 20px;
-      box-sizing: border-box;
-      border-radius: 10px;
-      margin-bottom: 20px;
-    }
-    .section h2 {
-      text-align: center;
-      margin-top: 0;
-    }
-    .desc {
-      text-align: center;
-      color: #666;
-      font-size: 14px;
-      margin-top: -5px;
-      margin-bottom: 15px;
-      font-style: italic;
-    }
-    .container {
-      display: grid;
-      gap: 20px;
-    }
-    .box-wrapper {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 10px;
-    }
-    .label {
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 5px;
-    }
-    .box {
-      border: 1px solid #ddd;
-      background-color: #f9f9f9;
-      height: 250px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      padding: 10px;
-    }
-    textarea {
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: none;
-      resize: none;
-      overflow: auto;
-      font-family: Arial, sans-serif;
-      text-align: left;
-      white-space: pre-wrap;
-    }
-    button {
-      width: 100%;
-      padding: 8px;
-      border: none;
-      background: linear-gradient(45deg, #007bff, #0056b3);
-      color: white;
-      cursor: pointer;
-      border-radius: 5px;
-      transition: 0.3s ease;
-    }
-    button:hover {
-      background: linear-gradient(45deg, #0056b3, #007bff);
-      transform: scale(1.05);
-    }
-    .refresh-btn {
-      display: block;
-      width: 200px;
-      margin: 0 auto 20px auto;
-      background: linear-gradient(45deg, #28a745, #218838);
-    }
-    .feedback {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #4CAF50;
-      color: white;
-      padding: 10px;
-      border-radius: 5px;
-      display: none;
-      transition: opacity 0.5s ease-out;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABSENSI SHIFT</title>
 
-    /* Responsif */
-    @media (min-width: 768px) {
-      .container {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-    @media (max-width: 767px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+<style>
+body{
+    font-family:Arial,sans-serif;
+    padding:20px;
+}
+
+.section{
+    border:1px solid #ddd;
+    background:#f9f9f9;
+    padding:20px;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+
+.section h2{
+    text-align:center;
+    margin-top:0;
+}
+
+.desc{
+    text-align:center;
+    color:#666;
+    font-size:14px;
+    margin-top:-5px;
+    margin-bottom:15px;
+    font-style:italic;
+}
+
+.container{
+    display:grid;
+    gap:20px;
+}
+
+.box-wrapper{
+    display:flex;
+    flex-direction:column;
+}
+
+.label{
+    font-weight:bold;
+    text-align:center;
+    margin-bottom:5px;
+}
+
+.box{
+    border:1px solid #ddd;
+    background:#f9f9f9;
+    height:250px;
+    display:flex;
+    flex-direction:column;
+    border-radius:10px;
+    box-shadow:0 2px 10px rgba(0,0,0,.1);
+    padding:10px;
+}
+
+textarea{
+    width:100%;
+    height:100%;
+    border:none;
+    resize:none;
+    background:none;
+    white-space:pre-wrap;
+    font-family:Arial;
+}
+
+button{
+    width:100%;
+    padding:8px;
+    border:none;
+    color:#fff;
+    cursor:pointer;
+    border-radius:5px;
+    background:linear-gradient(45deg,#007bff,#0056b3);
+}
+
+button:hover{
+    transform:scale(1.03);
+}
+
+.refresh-btn{
+    display:block;
+    width:220px;
+    margin:0 auto 20px;
+    background:linear-gradient(45deg,#28a745,#218838);
+}
+
+.feedback{
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    background:#4CAF50;
+    color:#fff;
+    padding:10px;
+    border-radius:5px;
+    display:none;
+}
+
+@media(min-width:768px){
+.container{grid-template-columns:repeat(3,1fr);}
+}
+
+@media(max-width:767px){
+.container{grid-template-columns:1fr;}
+}
+</style>
+
 </head>
+
 <body>
 
-  <button class="refresh-btn" onclick="fetchData()">🔄 Refresh Data</button>
+<button class="refresh-btn" onclick="fetchData()">🔄 Refresh Data</button>
 
-  <div class="section" id="full_personil">
-    <h2>Team EVO</h2>
-    <p class="desc">Kirim ke grup EVO-EXO, Jupiter OPS, NOC All Operator & OPS GCS (PSCF-BSCF)</p>
-    <div class="container"></div>
-  </div>
+<!-- EVO -->
+<div class="section" id="full_personil">
+<h2>Team EVO</h2>
+<p class="desc">Kirim ke grup EVO-EXO, Jupiter OPS, NOC All Operator & OPS GCS (PSCF-BSCF)</p>
+<div class="container"></div>
+</div>
 
-  <div class="section" id="no_full_personil">
-    <h2>Team EVO</h2>
-    <p class="desc">Kirim ke Shift On Duty ITD - Operation & Telegram grup Berkah</p>
-    <div class="container"></div>
-  </div>
+<!-- EVO TANPA OPERATOR -->
+<div class="section" id="no_full_personil">
+<h2>Team EVO (Tanpa Operator)</h2>
+<p class="desc">Kirim ke Shift On Duty ITD - Operation & Telegram grup Berkah</p>
+<div class="container"></div>
+</div>
 
-  <div class="section" id="team_exo">
-    <h2>Team EXO</h2>
-    <p class="desc">Team Edge Network - Extranet (ex.WNO)</p>
-    <div class="container"></div>
-  </div>
+<!-- EXO -->
+<div class="section" id="team_exo">
+<h2>Team EXO</h2>
+<div class="container"></div>
+</div>
 
-  <div class="section" id="monitoring">
-    <h2>Team Monitoring</h2>
-    <p class="desc">Jupiter & H2H</p>
-    <div class="container"></div>
-  </div>
+<!-- EXO TANPA OPERATOR -->
+<div class="section" id="team_exo_no_operator">
+<h2>Team EXO (Tanpa Operator)</h2>
+<div class="container"></div>
+</div>
 
-  <div id="feedback" class="feedback">Copied to clipboard!</div>
+<!-- ITSM -->
+<div class="section" id="monitoring">
+<h2>Team ITSM</h2>
+<p class="desc">Jupiter & H2H</p>
+<div class="container"></div>
+</div>
 
-  <script>
-    function copyToClipboard(id) {
-      const copyText = document.getElementById(id);
-      copyText.select();
-      copyText.setSelectionRange(0, 99999);
-      try {
-        document.execCommand('copy');
-        const feedback = document.getElementById('feedback');
-        feedback.style.display = 'block';
-        setTimeout(() => feedback.style.display = 'none', 1000);
-      } catch {
-        alert('Copy failed. Please copy manually.');
-      }
-    }
+<div id="feedback" class="feedback">Copied</div>
 
-    async function fetchData() {
-      const apiURL = 'https://script.google.com/macros/s/AKfycbyDiILOpK7bx0WUktE4_D5zuJp_VyUEexw_WMZhVCO5LIj3HDE-1V1lrWl2OUg5ZeWn/exec';
-      
-      document.querySelectorAll('.container').forEach(c => c.innerHTML = 'Loading...');
-      try {
-        const response = await fetch(apiURL);
-        if (!response.ok) throw new Error('Network response was not ok.');
-        const json = await response.json();
+<script>
 
-        const labels = {
-          'E59': 'Shift 1', 'O59': 'Shift 2', 'Y59': 'Shift 3',
-          'E60': 'Shift 1', 'O60': 'Shift 2', 'Y60': 'Shift 3',
-          'E61': 'Shift 1', 'O61': 'Shift 2', 'Y61': 'Shift 3',
-          'E62': 'Shift 1', 'O62': 'Shift 2', 'Y62': 'Shift 3'
-        };
+function copyToClipboard(id){
+    const el=document.getElementById(id);
+    el.select();
+    document.execCommand("copy");
 
-        const fullPersonilContainer = document.querySelector('#full_personil .container');
-        const noFullPersonilContainer = document.querySelector('#no_full_personil .container');
-        const exoContainer = document.querySelector('#team_exo .container');
-        const monitoringContainer = document.querySelector('#monitoring .container');
+    const fb=document.getElementById("feedback");
+    fb.style.display="block";
+    setTimeout(()=>fb.style.display="none",1000);
+}
 
-        fullPersonilContainer.innerHTML = '';
-        noFullPersonilContainer.innerHTML = '';
-        exoContainer.innerHTML = '';
-        monitoringContainer.innerHTML = '';
+async function fetchData(){
 
-        const fullPersonilCells = ['E59', 'O59', 'Y59'];
-        const noFullPersonilCells = ['E60', 'O60', 'Y60'];
-        const monitoringCells = ['E61', 'O61', 'Y61'];
-        const exoCells = ['E62', 'O62', 'Y62'];
+const apiURL="https://script.google.com/macros/s/AKfycbzyQK3y9gpzfmXkcfaKaz9MAh7n-4kHROJdKNvfG1xzG2g9LTk4PNbWr1LDl4H64t7M/exec";
 
-        function createBox(cellId, container) {
-          const boxWrapper = document.createElement('div');
-          boxWrapper.className = 'box-wrapper';
+document.querySelectorAll(".container").forEach(c=>c.innerHTML="Loading...");
 
-          const label = document.createElement('div');
-          label.className = 'label';
-          label.innerText = labels[cellId] || cellId;
+try{
 
-          const box = document.createElement('div');
-          box.className = 'box';
+const res=await fetch(apiURL);
+const json=await res.json();
 
-          const textarea = document.createElement('textarea');
-          textarea.id = `${cellId}_textarea`;
-          textarea.readOnly = true;
-          textarea.textContent = json[cellId] || 'No Data';
-          box.appendChild(textarea);
+const labels={
+E59:"Shift 1",O59:"Shift 2",Y59:"Shift 3",
+E60:"Shift 1",O60:"Shift 2",Y60:"Shift 3",
+E62:"Shift 1",O62:"Shift 2",Y62:"Shift 3",
+E63:"Shift 1",O63:"Shift 2",Y63:"Shift 3",
+E61:"Shift 1",O61:"Shift 2",Y61:"Shift 3"
+};
 
-          const button = document.createElement('button');
-          button.innerText = 'Copy';
-          button.onclick = () => copyToClipboard(`${cellId}_textarea`);
-          box.appendChild(button);
+function box(cell,container){
 
-          boxWrapper.appendChild(label);
-          boxWrapper.appendChild(box);
-          container.appendChild(boxWrapper);
-        }
+const w=document.createElement("div");
+w.className="box-wrapper";
 
-        fullPersonilCells.forEach(id => createBox(id, fullPersonilContainer));
-        noFullPersonilCells.forEach(id => createBox(id, noFullPersonilContainer));
-        monitoringCells.forEach(id => createBox(id, monitoringContainer));
-        exoCells.forEach(id => createBox(id, exoContainer));
+const l=document.createElement("div");
+l.className="label";
+l.innerText=labels[cell]||cell;
 
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        document.querySelectorAll('.container').forEach(c => c.innerHTML = 'Failed to load data.');
-      }
-    }
+const b=document.createElement("div");
+b.className="box";
 
-    fetchData();
-    setInterval(fetchData, 3600000); // refresh tiap 1 jam
-  </script>
+const t=document.createElement("textarea");
+t.id=cell+"_t";
+t.readOnly=true;
+t.textContent=json[cell]||"No Data";
+
+const btn=document.createElement("button");
+btn.innerText="Copy";
+btn.onclick=()=>copyToClipboard(t.id);
+
+b.appendChild(t);
+b.appendChild(btn);
+
+w.appendChild(l);
+w.appendChild(b);
+container.appendChild(w);
+
+}
+
+const evo=document.querySelector("#full_personil .container");
+const evoNo=document.querySelector("#no_full_personil .container");
+const exo=document.querySelector("#team_exo .container");
+const exoNo=document.querySelector("#team_exo_no_operator .container");
+const itsm=document.querySelector("#monitoring .container");
+
+evo.innerHTML="";
+evoNo.innerHTML="";
+exo.innerHTML="";
+exoNo.innerHTML="";
+itsm.innerHTML="";
+
+["E59","O59","Y59"].forEach(c=>box(c,evo));
+["E60","O60","Y60"].forEach(c=>box(c,evoNo));
+
+["E62","O62","Y62"].forEach(c=>box(c,exo));
+["E63","O63","Y63"].forEach(c=>box(c,exoNo));
+
+["E61","O61","Y61"].forEach(c=>box(c,itsm));
+
+}catch(err){
+console.log(err);
+document.querySelectorAll(".container").forEach(c=>c.innerHTML="Failed load data");
+}
+
+}
+
+fetchData();
+setInterval(fetchData,3600000);
+
+</script>
+
 </body>
 </html>
-
-
