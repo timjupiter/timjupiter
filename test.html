@@ -120,14 +120,9 @@ button{
 <script>
 
 // ================= SUPABASE =================
-// FIX: createClient butuh base URL project, BUKAN path /rest/v1/.
-// Kalau ada /rest/v1/ di belakangnya, semua request (upsert, select, realtime) bakal salah arah.
 const SUPABASE_URL = "https://eaqmgrchnbetoetojdgu.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVhcW1ncmNobmJldG9ldG9qZGd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwODY2NzEsImV4cCI6MjA5NjY2MjY3MX0.7v3yBoDiQbX1Y3Ass75MyaehdbiK0EjDPIIQKYdioM8";
 
-// FIX: jangan pakai nama "supabase" untuk variabel client — itu nge-shadow
-// namespace global window.supabase dari library, dan browser akan throw
-// "Identifier 'supabase' has already been declared".
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ================= DATA =================
@@ -186,16 +181,12 @@ ${frq} - AVAILABLE
 });
 
 // ================= DEBOUNCE HELPER =================
-// FIX: mencegah upsert dikirim ke Supabase di SETIAP keystroke.
-// UI (header/provider) tetap update instan, tapi network request di-debounce.
 const debounceTimers = {};
 function debounce(key, fn, delay = 400){
     clearTimeout(debounceTimers[key]);
     debounceTimers[key] = setTimeout(fn, delay);
 }
 
-// Flag supaya saat menerima update realtime, kita tidak langsung
-// upsert ulang data yang baru saja kita terima (mencegah loop/race).
 const suppressUpsert = {};
 
 // ================= INPUT HANDLER =================
@@ -217,8 +208,10 @@ function updateLocalUI(frq){
         const now = new Date();
         const hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
 
-        header.innerHTML =
-        `Onprogres<br>${hari[now.getDay()]}, ${now.toLocaleString()} WIB`;
+        // Format: Hari, Tgl/Bln/Thn, Jam:Mnt:Det AM/PM WIB
+        const dateString = `${hari[now.getDay()]}, ${now.toLocaleString("id-ID")}`;
+
+        header.innerHTML = `${frq} Onprogres<br>${dateString} WIB`;
 
     }else{
         header.className = "form-header blue";
@@ -251,7 +244,7 @@ async function saveToSupabase(frq){
         provider,
         status: esn ? "ONPROGRES" : "AVAILABLE",
         updated_at: new Date().toISOString()
-    }, { onConflict: "frq" }); // FIX: pastikan upsert konflik di kolom frq, butuh unique constraint di tabel
+    }, { onConflict: "frq" });
 
 	if(error){
 		console.error("Supabase upsert error:", error.message);
@@ -270,8 +263,6 @@ FRQ : ${frq}
 
 *CW ON*`;
 
-    // FIX: navigator.clipboard butuh konteks aman (https/localhost) dan bisa
-    // gagal silent kalau permission ditolak — sekarang error-nya ditangkap.
     if(navigator.clipboard && navigator.clipboard.writeText){
         navigator.clipboard.writeText(text)
             .then(()=>showToast("COPIED ✓"))
@@ -282,7 +273,6 @@ FRQ : ${frq}
 }
 
 function fallbackCopy(text){
-    // Fallback untuk browser/HTTP non-secure context yang tidak punya Clipboard API
     const ta = document.createElement("textarea");
     ta.value = text;
     ta.style.position = "fixed";
@@ -305,10 +295,10 @@ function clearCard(frq){
     document.getElementById(`esn-${frq}`).value="";
     document.getElementById(`site-${frq}`).value="";
     document.getElementById(`lft-${frq}`).value="";
-    document.getElementById(`exec-${frq}`).value=""; // FIX: executor ikut reset ke "-- PILIH --"
+    document.getElementById(`exec-${frq}`).value="";
 
     updateLocalUI(frq);
-    saveToSupabase(frq); // langsung simpan saat clear, tanpa nunggu debounce
+    saveToSupabase(frq);
 }
 
 // ================= REALTIME =================
@@ -320,11 +310,10 @@ supabaseClient
 
         const d = payload.new;
         if(!d || !d.frq) return;
-        if(!FRQ_LIST.includes(d.frq)) return; // FIX: jaga-jaga kalau ada row frq lain
+        if(!FRQ_LIST.includes(d.frq)) return;
 
         const frq = d.frq;
 
-        // FIX: cegah perubahan dari realtime memicu upsert balik (loop)
         suppressUpsert[frq] = true;
 
         const esnEl  = document.getElementById(`esn-${frq}`);
@@ -335,7 +324,7 @@ supabaseClient
         if(esnEl)  esnEl.value  = d.esn || "";
         if(siteEl) siteEl.value = d.site_id || "";
         if(lftEl)  lftEl.value  = d.lft || "";
-        if(execEl) execEl.value = d.executor || ""; // FIX: executor ikut sinkron, termasuk saat di-reset jadi kosong
+        if(execEl) execEl.value = d.executor || "";
 
         updateLocalUI(frq);
 
