@@ -38,6 +38,7 @@ html,body{
     text-align:center;
     font-weight:700;
     transition:.3s;
+    line-height:1.4;
 }
 
 .blue{background:linear-gradient(135deg,#2563eb,#1d4ed8);}
@@ -207,11 +208,13 @@ function updateLocalUI(frq){
 
         const now = new Date();
         const hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+        const dateString = `${hari[now.getDay()]}, ${now.toLocaleString("id-ID")} WIB`;
 
-        // Format: Hari, Tgl/Bln/Thn, Jam:Mnt:Det AM/PM WIB
-        const dateString = `${hari[now.getDay()]}, ${now.toLocaleString("id-ID")}`;
-
-        header.innerHTML = `${frq} Onprogres<br>${dateString} WIB`;
+        header.innerHTML = `
+            <div>${frq}</div>
+            <div>Onprogres</div>
+            <div>${dateString}</div>
+        `;
 
     }else{
         header.className = "form-header blue";
