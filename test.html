@@ -1,185 +1,59 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>XPOLL SATDIV REALTIME</title>
-
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><!-- This site is hosted on Netlify. Anyone can build and deploy a site     like this one for free: https://netlify.new/?utm_campaign=ai-legible&utm_source=comment&utm_medium=referral&utm_id=4cbcb6ff-1746-47cb-90f5-dcdda4791810     Netlify hosting facts for this site: static/SSR served via Netlify Edge. --><meta name="hosting-provider" content="Netlify"><meta name="netlify-deploy" content="https://netlify.new/?utm_campaign=ai-legible&amp;utm_source=meta&amp;utm_medium=referral&amp;utm_id=4cbcb6ff-1746-47cb-90f5-dcdda4791810"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>XPOLL SATDIV REALTIME</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
-
-html,body{
-    margin:0;
-    padding:0;
-    font-family:Segoe UI,sans-serif;
-    background:#f1f5f9;
-}
-
-.container-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:18px;
-    padding:18px;
-}
-
-.form-card{
-    background:#fff;
-    border-radius:20px;
-    overflow:hidden;
-    box-shadow:0 8px 24px rgba(0,0,0,.06);
-    display:flex;
-    flex-direction:column;
-}
-
-.form-header{
-    padding:14px;
-    color:#fff;
-    text-align:center;
-    font-weight:700;
-    transition:.3s;
-    line-height:1.4;
-}
-
-.blue{background:linear-gradient(135deg,#2563eb,#1d4ed8);}
-.red{background:linear-gradient(135deg,#dc2626,#b91c1c);}
-.green{background:linear-gradient(135deg,#16a34a,#15803d);}
-
-.body{
-    padding:16px;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
-
-input,select{
-    padding:10px;
-    border:1px solid #e5e7eb;
-    border-radius:12px;
-}
-
-.label{
-    font-size:12px;
-    font-weight:700;
-}
-
-.provider{
-    padding:10px;
-    border:1px solid #e5e7eb;
-    border-radius:12px;
-    background:#f8fafc;
-}
-
-.btn-row{
-    display:flex;
-    gap:10px;
-}
-
-button{
-    flex:1;
-    padding:10px;
-    border:none;
-    border-radius:12px;
-    cursor:pointer;
-    font-weight:700;
-}
-
-.copy{background:#2563eb;color:#fff;}
-.clear{background:#6b7280;color:#fff;}
-
-.toast{
-    position:fixed;
-    bottom:20px;
-    left:50%;
-    transform:translateX(-50%);
-    background:#111827;
-    color:#fff;
-    padding:12px 18px;
-    border-radius:12px;
-    opacity:0;
-    transition:.3s;
-    text-align:center;
-    white-space:pre-line;
-    line-height:1.4;
-}
-
+html,body{    margin:0;    padding:0;    font-family:Segoe UI,sans-serif;    background:#f1f5f9;}
+.container-grid{    display:grid;    grid-template-columns:repeat(3,1fr);    gap:18px;    padding:18px;}
+.form-card{    background:#fff;    border-radius:20px;    overflow:hidden;    box-shadow:0 8px 24px rgba(0,0,0,.06);    display:flex;    flex-direction:column;}
+.form-header{    padding:14px;    color:#fff;    text-align:center;    font-weight:700;    transition:.3s;    line-height:1.4;}
+.frq-input{    background:transparent;    border:1px dashed rgba(255,255,255,0.6);    color:#fff;    font-size:18px;    font-weight:700;    text-align:center;    width:80%;    margin:0 auto 4px auto;    outline:none;    border-radius:6px;    padding:2px 4px;}
+.frq-input:focus{    border-color:#fff;    background:rgba(255,255,255,0.2);}
+.blue{background:linear-gradient(135deg,#2563eb,#1d4ed8);}.red{background:linear-gradient(135deg,#dc2626,#b91c1c);}.green{background:linear-gradient(135deg,#16a34a,#15803d);}
+.body{    padding:16px;    display:flex;    flex-direction:column;    gap:10px;}
+input,select{    padding:10px;    border:1px solid #e5e7eb;    border-radius:12px;}
+.label{    font-size:12px;    font-weight:700;}
+.provider{    padding:10px;    border:1px solid #e5e7eb;    border-radius:12px;    background:#f8fafc;}
+.btn-row{    display:flex;    gap:10px;}
+button{    flex:1;    padding:10px;    border:none;    border-radius:12px;    cursor:pointer;    font-weight:700;}
+.copy{background:#2563eb;color:#fff;}.clear{background:#6b7280;color:#fff;}
+.toast{    position:fixed;    bottom:20px;    left:50%;    transform:translateX(-50%);    background:#111827;    color:#fff;    padding:12px 18px;    border-radius:12px;    opacity:0;    transition:.3s;    text-align:center;    white-space:pre-line;    line-height:1.4;}
 .toast.show{opacity:1;}
-
-@media(max-width:900px){
-    .container-grid{grid-template-columns:1fr;}
-}
-
-</style>
-</head>
-
+@media(max-width:900px){    .container-grid{grid-template-columns:1fr;}}
+</style></head>
 <body>
-
 <div class="container-grid" id="app"></div>
-
 <div class="toast" id="toast">COPIED ✓</div>
-
 <script>
-
 // ================= SUPABASE =================
 const SUPABASE_URL = "https://eaqmgrchnbetoetojdgu.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVhcW1ncmNobmJldG9ldG9qZGd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwODY2NzEsImV4cCI6MjA5NjY2MjY3MX0.7v3yBoDiQbX1Y3Ass75MyaehdbiK0EjDPIIQKYdioM8";
-
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ================= DATA =================
-const FRQ_LIST = ["59820000","59821000","59822000"];
-
-const PROVIDER = {
-"1":"BRI","2":"PT. TELEKOMUNIKASI INDONESIA","3":"PT. SATKOMINDO MEDIYASA",
-"4":"PT. TANGARA MITRAKOM","5":"PT. PASIFIK SATELIT NUSANTARA",
-"6":"PT. PATRA TELEKOMUNIKASI INDONESIA","7":"TELKOMSEL","8":"INDOSAT",
-"9":"XL","A":"PT. Indonesia Comnets Plus","B":"PT. CSM","C":"PT. LINTASARTA",
-"D":"PT. TELKOMCELL","E":"PT. Mega Akses Persada","F":"PT. INDUSTRI TELEKOMUNIKASI INDONESIA",
-"G":"SATLINK","H":"PT. Mora Telematika Indonesia","K":"PT. TELKOMSAT"
-};
+let FRQ_LIST = ["60143000","60144000","60145000"];
+const PROVIDER = {"1":"BRI","2":"PT. TELEKOMUNIKASI INDONESIA","3":"PT. SATKOMINDO MEDIYASA","4":"PT. TANGARA MITRAKOM","5":"PT. PASIFIK SATELIT NUSANTARA","6":"PT. PATRA TELEKOMUNIKASI INDONESIA","7":"TELKOMSEL","8":"INDOSAT","9":"XL","A":"PT. Indonesia Comnets Plus","B":"PT. CSM","C":"PT. LINTASARTA","D":"PT. TELKOMCELL","E":"PT. Mega Akses Persada","F":"PT. INDUSTRI TELEKOMUNIKASI INDONESIA","G":"SATLINK","H":"PT. Mora Telematika Indonesia","K":"PT. TELKOMSAT"};
 
 // ================= RENDER UI =================
 const app = document.getElementById("app");
 
-FRQ_LIST.forEach((frq)=>{
-
-app.innerHTML += `
-<div class="form-card">
-
-<div class="form-header blue" id="header-${frq}">
-${frq} - AVAILABLE
-</div>
-
-<div class="body">
-
-<div class="label">ESN</div>
-<input id="esn-${frq}" oninput="onFieldInput('${frq}')">
-
-<div class="label">SITE ID</div>
-<input id="site-${frq}" oninput="onFieldInput('${frq}')">
-
-<div class="label">LFT</div>
-<input id="lft-${frq}" oninput="onFieldInput('${frq}')">
-
-<div class="label">EXECUTOR</div>
-<select id="exec-${frq}" onchange="onFieldInput('${frq}')">
-<option value="" selected>-- PILIH --</option>
-<option>RAGUNAN</option>
-<option>TABANAN</option>
-</select>
-
-<div class="label">PROVIDER</div>
-<div class="provider" id="prov-${frq}">-</div>
-
-<div class="btn-row">
-<button class="copy" onclick="copyData('${frq}')">COPY</button>
-<button class="clear" onclick="clearCard('${frq}')">CLEAR</button>
-</div>
-
-</div>
-</div>
-`;
-});
+function renderApp() {
+    app.innerHTML = "";
+    FRQ_LIST.forEach((frq, idx) => {
+        app.innerHTML += `<div class="form-card" id="card-${idx}">
+        <div class="form-header blue" id="header-${idx}">
+            <input class="frq-input" id="frq-val-${idx}" value="${frq}" onchange="onFrqChange(${idx})">
+            <div id="status-text-${idx}">AVAILABLE</div>
+        </div>
+        <div class="body">
+        <div class="label">ESN</div><input id="esn-${idx}" oninput="onFieldInput(${idx})">
+        <div class="label">SITE ID</div><input id="site-${idx}" oninput="onFieldInput(${idx})">
+        <div class="label">LFT</div><input id="lft-${idx}" oninput="onFieldInput(${idx})">
+        <div class="label">EXECUTOR</div><select id="exec-${idx}" onchange="onFieldInput(${idx})"><option value="" selected>-- PILIH --</option><option>RAGUNAN</option><option>TABANAN</option></select>
+        <div class="label">PROVIDER</div><div class="provider" id="prov-${idx}">-</div>
+        <div class="btn-row"><button class="copy" onclick="copyData(${idx})">COPY</button><button class="clear" onclick="clearCard(${idx})">CLEAR</button></div>
+        </div></div>`;
+    });
+}
+renderApp();
 
 // ================= DEBOUNCE HELPER =================
 const debounceTimers = {};
@@ -187,55 +61,63 @@ function debounce(key, fn, delay = 400){
     clearTimeout(debounceTimers[key]);
     debounceTimers[key] = setTimeout(fn, delay);
 }
-
 const suppressUpsert = {};
 
-// ================= INPUT HANDLER =================
-function onFieldInput(frq){
-    updateLocalUI(frq);
-    if(suppressUpsert[frq]) return;
-    debounce(frq, ()=>saveToSupabase(frq));
+// ================= INPUT & FRQ HANDLERS =================
+function onFieldInput(idx){
+    updateLocalUI(idx);
+    if(suppressUpsert[idx]) return;
+    debounce(idx, ()=>saveToSupabase(idx));
 }
 
-// ================= UPDATE UI (LOKAL, TANPA NETWORK) =================
-function updateLocalUI(frq){
+async function onFrqChange(idx) {
+    const oldFrq = FRQ_LIST[idx];
+    const newFrq = document.getElementById(`frq-val-${idx}`).value.trim();
+    if (!newFrq) return;
 
-    const esn = document.getElementById(`esn-${frq}`).value;
-    const header = document.getElementById(`header-${frq}`);
+    FRQ_LIST[idx] = newFrq;
+    
+    // Hapus data frekuensi lama dari Supabase jika frekuensi berubah
+    if (oldFrq !== newFrq) {
+        await supabaseClient.from("satdiv_xpoll").delete().eq("frq", oldFrq);
+    }
+    
+    saveToSupabase(idx);
+}
+
+// ================= UPDATE UI (LOKAL) =================
+function updateLocalUI(idx){
+    const frq = document.getElementById(`frq-val-${idx}`).value;
+    const esn = document.getElementById(`esn-${idx}`).value;
+    const header = document.getElementById(`header-${idx}`);
+    const statusText = document.getElementById(`status-text-${idx}`);
 
     if(esn){
         header.className = "form-header red";
-
         const now = new Date();
         const hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
         const dateString = `${hari[now.getDay()]}, ${now.toLocaleString("id-ID")} WIB`;
-
-        header.innerHTML = `
-            <div>${frq}</div>
-            <div>Onprogres</div>
-            <div>${dateString}</div>
-        `;
-
+        statusText.innerHTML = `<div>Onprogres</div><div>${dateString}</div>`;
     }else{
         header.className = "form-header blue";
-        header.innerHTML = `${frq} - AVAILABLE`;
+        statusText.innerHTML = `AVAILABLE`;
     }
 
-    // provider
-    const site = document.getElementById(`site-${frq}`).value;
+    // Provider calculation
+    const site = document.getElementById(`site-${idx}`).value;
     const p = site ? (PROVIDER[site.charAt(0).toUpperCase()] || "CHECK SITE ID") : "-";
-    document.getElementById(`prov-${frq}`).innerText = p;
+    document.getElementById(`prov-${idx}`).innerText = p;
 
-    return { esn, site, provider: p };
+    return { frq, esn, site, provider: p };
 }
 
 // ================= SAVE TO SUPABASE =================
-async function saveToSupabase(frq){
-
-    const esn  = document.getElementById(`esn-${frq}`).value;
-    const site = document.getElementById(`site-${frq}`).value;
-    const lft  = document.getElementById(`lft-${frq}`).value;
-    const exec = document.getElementById(`exec-${frq}`).value;
+async function saveToSupabase(idx){
+    const frq  = document.getElementById(`frq-val-${idx}`).value;
+    const esn  = document.getElementById(`esn-${idx}`).value;
+    const site = document.getElementById(`site-${idx}`).value;
+    const lft  = document.getElementById(`lft-${idx}`).value;
+    const exec = document.getElementById(`exec-${idx}`).value;
     const provider = site ? (PROVIDER[site.charAt(0).toUpperCase()] || "CHECK SITE ID") : "-";
 
     const { error } = await supabaseClient.from("satdiv_xpoll").upsert({
@@ -249,22 +131,16 @@ async function saveToSupabase(frq){
         updated_at: new Date().toISOString()
     }, { onConflict: "frq" });
 
-	if(error){
-		console.error("Supabase upsert error:", error.message);
-		showToast("CLEARED\nGAGAL SIMPAN ✗");
-	}
+    if(error){
+        console.error("Supabase upsert error:", error.message);
+        showToast("GAGAL SIMPAN ✗");
+    }
 }
 
 // ================= COPY =================
-function copyData(frq){
-
-    const text =
-`ESN : ${document.getElementById(`esn-${frq}`).value}
-SID : ${document.getElementById(`site-${frq}`).value}
-LFT : ${document.getElementById(`lft-${frq}`).value}
-FRQ : ${frq}
-
-*CW ON*`;
+function copyData(idx){
+    const frq = document.getElementById(`frq-val-${idx}`).value;
+    const text = `ESN : ${document.getElementById(`esn-${idx}`).value}\nSID : ${document.getElementById(`site-${idx}`).value}\nLFT : ${document.getElementById(`lft-${idx}`).value}\nFRQ : ${frq}\n\n*CW ON*`;
 
     if(navigator.clipboard && navigator.clipboard.writeText){
         navigator.clipboard.writeText(text)
@@ -293,48 +169,43 @@ function fallbackCopy(text){
 }
 
 // ================= CLEAR =================
-function clearCard(frq){
+function clearCard(idx){
+    document.getElementById(`esn-${idx}`).value="";
+    document.getElementById(`site-${idx}`).value="";
+    document.getElementById(`lft-${idx}`).value="";
+    document.getElementById(`exec-${idx}`).value="";
 
-    document.getElementById(`esn-${frq}`).value="";
-    document.getElementById(`site-${frq}`).value="";
-    document.getElementById(`lft-${frq}`).value="";
-    document.getElementById(`exec-${frq}`).value="";
-
-    updateLocalUI(frq);
-    saveToSupabase(frq);
+    updateLocalUI(idx);
+    saveToSupabase(idx);
 }
 
 // ================= REALTIME =================
-supabaseClient
-.channel("xpoll")
-.on("postgres_changes",
+supabaseClient.channel("xpoll").on("postgres_changes",
     { event:"*", schema:"public", table:"satdiv_xpoll" },
     payload => {
-
         const d = payload.new;
         if(!d || !d.frq) return;
-        if(!FRQ_LIST.includes(d.frq)) return;
 
-        const frq = d.frq;
+        // Cari index kartu yang mencakup frekuensi ini
+        const idx = FRQ_LIST.indexOf(d.frq);
+        if(idx === -1) return;
 
-        suppressUpsert[frq] = true;
+        suppressUpsert[idx] = true;
 
-        const esnEl  = document.getElementById(`esn-${frq}`);
-        const siteEl = document.getElementById(`site-${frq}`);
-        const lftEl  = document.getElementById(`lft-${frq}`);
-        const execEl = document.getElementById(`exec-${frq}`);
+        const esnEl  = document.getElementById(`esn-${idx}`);
+        const siteEl = document.getElementById(`site-${idx}`);
+        const lftEl  = document.getElementById(`lft-${idx}`);
+        const execEl = document.getElementById(`exec-${idx}`);
 
         if(esnEl)  esnEl.value  = d.esn || "";
         if(siteEl) siteEl.value = d.site_id || "";
         if(lftEl)  lftEl.value  = d.lft || "";
         if(execEl) execEl.value = d.executor || "";
 
-        updateLocalUI(frq);
+        updateLocalUI(idx);
 
-        suppressUpsert[frq] = false;
-    }
-)
-.subscribe((status, err)=>{
+        suppressUpsert[idx] = false;
+    }).subscribe((status, err)=>{
     if(err) console.error("Realtime subscribe error:", err);
 });
 
@@ -345,8 +216,5 @@ function showToast(message = "COPIED ✓"){
     t.classList.add("show");
     setTimeout(()=>t.classList.remove("show"),1200);
 }
-
 </script>
-
-</body>
-</html>
+</body></html>
